@@ -37,8 +37,8 @@ func main() {
 	})
 
 	// Start the server
-	log.Println("Server started on :3000")
-	if err := http.ListenAndServe(":3000", nil); err != nil {
+	log.Println("Server started on :6969")
+	if err := http.ListenAndServe(":6969", nil); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }

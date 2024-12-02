@@ -3,6 +3,7 @@ package manager
 import (
 	"log"
 	"sync"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -34,7 +35,7 @@ func (um *UserManager) AddUser(name string, conn *websocket.Conn, id string) {
 	user := User{Name: name, Conn: conn, ID: id}
 	um.users[id] = user
 	um.queue = append(um.queue, id)
-
+	print("\nUser added to queue: ", id)
 	um.sendEvent(conn, map[string]interface{}{
 		"event": "lobby",
 	})
@@ -97,23 +98,62 @@ func (um *UserManager) initHandlers(user User) {
 			return
 		}
 
-		event := message["event"]
-		roomID := message["roomId"].(string)
+		// Ensure "event" exists and is a string
+		event, ok := message["event"].(string)
+		if !ok {
+			log.Println("Invalid or missing event field")
+			continue
+		}
 
+		// Handle specific events
 		switch event {
 		case "offer":
-			sdp := message["sdp"].(string)
+			roomID, ok := message["roomId"].(string)
+			if !ok {
+				log.Println("Invalid or missing roomId for offer")
+				continue
+			}
+			sdp, ok := message["sdp"].(string)
+			if !ok {
+				log.Println("Invalid or missing SDP for offer")
+				continue
+			}
 			um.roomManager.handleOffer(roomID, sdp, user.ID)
 		case "answer":
-			sdp := message["sdp"].(string)
+			roomID, ok := message["roomId"].(string)
+			if !ok {
+				log.Println("Invalid or missing roomId for answer")
+				continue
+			}
+			sdp, ok := message["sdp"].(string)
+			if !ok {
+				log.Println("Invalid or missing SDP for answer")
+				continue
+			}
 			um.roomManager.handleAnswer(roomID, sdp, user.ID)
 		case "add-ice-candidate":
-			candidate := message["candidate"].(map[string]interface{})
-			iceType := message["type"].(string)
+			roomID, ok := message["roomId"].(string)
+			if !ok {
+				log.Println("Invalid or missing roomId for ICE candidate")
+				continue
+			}
+			candidate, ok := message["candidate"].(map[string]interface{})
+			if !ok {
+				log.Println("Invalid or missing candidate for ICE candidate")
+				continue
+			}
+			iceType, ok := message["type"].(string)
+			if !ok {
+				log.Println("Invalid or missing type for ICE candidate")
+				continue
+			}
 			um.roomManager.handleIceCandidates(roomID, user.ID, candidate, iceType)
+		default:
+			log.Println("Unknown event type:", event)
 		}
 	}
 }
+
 
 func (um *UserManager) sendEvent(conn *websocket.Conn, message map[string]interface{}) {
 	err := conn.WriteJSON(message)

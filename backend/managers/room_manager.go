@@ -42,7 +42,7 @@ func (rm *RoomManager) CreateRoom(user1 User, user2 User) string {
 	roomID := rm.generateRoomID()
 	rm.rooms[roomID] = Room{User1: user1, User2: user2}
 
-	log.Printf("Room %s created", roomID)
+	log.Printf("\nRoom %s created", roomID)
 
 	// Notify both users
 	user1.Conn.WriteJSON(map[string]interface{}{
