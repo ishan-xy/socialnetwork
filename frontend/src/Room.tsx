@@ -65,7 +65,6 @@ export const Room = () => {
             Waiting for someone to join
         </div>
     }
-
     return (
         <div>
             Hi {name}
