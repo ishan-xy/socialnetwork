@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-
+import "./Room.css";
 const URL = "ws://localhost:6969";
 
 export const Room = ({
@@ -202,9 +202,15 @@ export const Room = ({
   return (
     <div>
       Hi {name}
-      <video autoPlay width={400} height={400} ref={localVideoRef} />
+      <div>
+        <video className="video-feed" autoPlay  ref={localVideoRef} />
+      </div>
+      
       {lobby ? "Waiting to connect you to someone" : null}
-      <video autoPlay width={400} height={400} ref={remoteVideoRef} />
+      <div>
+        <video className="video-feed" autoPlay  ref={remoteVideoRef} />
+      </div>
+      
     </div>
   );
 };
