@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Room } from '../Room';
+import { Room } from './Room';
 import './Landing.css'; // Import the CSS file
 
 export const Landing = () => {

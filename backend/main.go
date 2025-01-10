@@ -22,22 +22,20 @@ func main() {
 		},
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			log.Println("Upgrade error:", err)
 			return
 		}
-
 		userID := generateRandomID()
-
-		// Add user to UserManager
 		userManager.AddUser("randomName", conn, userID)
 	})
 
-	// Start the server
-	log.Println("Server started on :6969")
-	if err := http.ListenAndServe(":6969", nil); err != nil {
+	err := r.Run(":6969")
+	if err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
